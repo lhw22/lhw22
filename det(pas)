@@ -1,0 +1,34 @@
+program det;
+var
+ a:array[1..1000,1..1000]of longint;
+ b:array[1..1000]of boolean;
+ i,j,n,ans:longint;
+function so(x:longint):longint;
+var i,sum:longint;
+begin 
+ sum:=1;
+ for i:=1 to x do if b[i] then inc(sum);exit(sum);
+end;
+function det(x:longint):longint;
+var flag:boolean; c,i,sum,p,q:longint;
+begin
+ sum:=0; c:=0;
+ if x=1 then for i:=1 to n do if b[i] then exit(a[1,i]);
+ if x=2 then begin flag:=false;for i:=1 to n do if b[i] then
+  begin if flag then q:=i else p:=i; flag:=true;end;
+  exit(a[1,p]*a[2,q]-a[2,p]*a[1,q]);
+ end;
+ for i:=1 to n do if b[i] then begin b[i]:=false;inc(c);
+  if (x+so(i))and 1=0 then inc(sum,a[x,i]*det(x-1))
+   else dec(sum,a[x,i]*det(x-1));b[i]:=true;end;
+ exit(sum);
+end;
+begin
+ writeln('请输入行列式的阶:');readln(n);
+ writeln('请输入行列式各项');
+ fillchar(b,sizeof(b),true);
+ for i:=1 to n do
+  for j:=1 to n do read(a[j,i]);
+ ans:=det(n);
+ write('行列式的值为:');writeln(ans);readln;
+end.
