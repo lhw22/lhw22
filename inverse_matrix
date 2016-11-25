@@ -1,0 +1,58 @@
+program inverse_matrix;
+var
+ a,c:array[1..1000,1..1000]of longint;
+ b:array[1..1000]of boolean;
+ i,j,k,n,ans:longint;
+procedure changec(x,y:longint);
+var i,t:longint;
+begin for i:=1 to n do 
+ begin t:=a[x,i];a[x,i]:=a[y,i];a[y,i]:=t;end;
+end;
+procedure changel(x,y:longint);
+var i,t:longint;
+begin for i:=1 to n do 
+ begin t:=a[i,x];a[i,x]:=a[i,y];a[i,y]:=t;end;
+end;
+function so(x:longint):longint;
+var i,sum:longint;
+begin 
+ sum:=1;
+ for i:=1 to x do if b[i] then inc(sum);exit(sum);
+end;
+function det(x:longint):longint;
+var flag:boolean; c,i,sum,p,q:longint;
+begin
+ sum:=0; c:=0;
+ if x=1 then for i:=1 to n do if b[i] then exit(a[1,i]);
+ if x=2 then begin flag:=false;for i:=1 to n do if b[i] then
+  begin if flag then q:=i else p:=i; flag:=true;end;
+  exit(a[1,p]*a[2,q]-a[2,p]*a[1,q]);
+ end;
+ for i:=1 to n do if b[i] then begin b[i]:=false;inc(c);
+  if (x+so(i))and 1=0 then inc(sum,a[x,i]*det(x-1))
+   else dec(sum,a[x,i]*det(x-1));b[i]:=true;end;
+ exit(sum);
+end;
+begin
+ writeln('请输入方阵的阶:');readln(n);
+ writeln('请输入方阵各项');
+ fillchar(b,sizeof(b),true);
+ for i:=1 to n do
+  for j:=1 to n do read(a[j,i]);
+ ans:=det(n);b[n]:=false;
+ for i:=1 to n do for j:=1 to n do
+ begin
+  for k:=i to n-1 do changel(k,k+1);
+  for k:=j to n-1 do changec(k,k+1);
+  if (i+j)and 1=0 then c[i,j]:=det(n-1)
+   else c[i,j]:=-det(n-1);
+  for k:=n-1 downto j do changec(k,k+1);
+  for k:=n-1 downto i do changel(k,k+1);
+ end;
+ write('方阵的行列式的值为:');writeln(ans);
+ if ans=0 then begin writeln('您输入的矩阵为奇异矩阵');readln;halt;end;
+ writeln('方阵的逆矩阵为:');
+ for i:=1 to n do begin
+  for j:=1 to n do write(c[j,i]/ans:0:2,' ');writeln;end;
+ readln;
+end.
